@@ -131,3 +131,6 @@ dmypy.json
 
 # Do not upload data
 data/
+
+# exclude this folder from syncing
+git_exclude/
