@@ -3,6 +3,8 @@ import SimpleITK as sitk
 import os
 import matplotlib.pyplot as plt
 from xml.dom import minidom
+import nibabel as nib
+
 
 
 DATA_PATH = r"C:\\temp\\TC_DATA\\"
@@ -16,8 +18,17 @@ def read_nii(path):
     Loads the NIFTI images.
     """
     img = sitk.ReadImage(path)
-    img_arr = sitk.GetArrayFromImage(img).astype('float')
+    img_arr = np.moveaxis(sitk.GetArrayFromImage(img).astype('float'), 0, -1)
     return img_arr
+
+
+def read_nii_masks(path1, path2):
+    """
+    Loads the masks resulting from the CSO files.
+    """
+    mask1 = read_nii(path1)
+    mask2 = read_nii(path2)
+    return mask1, mask2
 
 
 def read_xml(path):
@@ -35,19 +46,7 @@ def read_xml(path):
     for elem in markers:
         positions = elem.getElementsByTagName('pos')
         coords = positions[0].firstChild.nodeValue
-        coords = [float(c) for c in coords.split(' ')]
-        markerlist.append(tuple(coords))
+        coords = [round(float(c)) for c in coords.split(' ')]
+        markerlist.append(tuple(coords[0:3]))
     
-    return markerlist
-
-
-
-
-# Load both files and print marker list + image shape
-file = "2postop"
-filepath = os.path.join(DATA_PATH_SCOLIOTIC, file)
-img = read_nii(filepath + ".nii")
-markers = read_xml(filepath + ".xml")
-print("\nMARKERS: ")
-for x in markers: print(x)
-print("\nIMAGE SHAPE:  ", img.shape)
+    return np.array(markerlist)
