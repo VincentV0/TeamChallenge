@@ -13,25 +13,26 @@ DATA_PATH_NONSCOLIOTIC = os.path.join(DATA_PATH, "Nonscoliotic")
 
 
 
-def read_nii(path):
+def read_nii(path, rotate=True):
     """
     Loads the NIFTI images.
     """
-    img = sitk.ReadImage(path)
-    img_arr = np.moveaxis(sitk.GetArrayFromImage(img).astype('float'), 0, -1)
-    return img_arr
+    ct_input = nib.load(path)
+    ct_img = ct_input.get_fdata()
+    if rotate:
+        ct_img = np.rot90(ct_img)
+    return ct_img
 
-
-def read_nii_masks(path1, path2):
+def read_nii_masks(path1, path2, rotate=True):
     """
     Loads the masks resulting from the CSO files.
     """
-    mask1 = read_nii(path1)
-    mask2 = read_nii(path2)
+    mask1 = read_nii(path1, rotate)
+    mask2 = read_nii(path2, rotate)
     return mask1, mask2
 
 
-def read_xml(path):
+def read_xml(path, rotate=True):
     """
     Reads a list of markers from the XML file.
     """
@@ -47,6 +48,9 @@ def read_xml(path):
         positions = elem.getElementsByTagName('pos')
         coords = positions[0].firstChild.nodeValue
         coords = [round(float(c)) for c in coords.split(' ')]
-        markerlist.append(tuple(coords[0:3]))
+        if rotate:
+            markerlist.append((coords[1], coords[0], coords[2]))
+        else:
+            markerlist.append(tuple(coords[0:3]))
     
     return np.array(markerlist)

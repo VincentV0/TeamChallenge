@@ -10,6 +10,7 @@ from skimage.morphology import erosion, dilation, area_closing, square, remove_s
 import scipy.ndimage as ndimage
 import numpy as np
 import time
+from tqdm import tqdm
 from ScrollPlot import ScrollPlot
 
 def NormalizeData(data):
@@ -41,7 +42,7 @@ img_data_blurred = ndimage.gaussian_filter(img_data, sigma=(3, 3, 3), order=0)
 thresholded_3d = np.zeros(img_data.shape)
 dl_image_3d = np.zeros(img_data.shape)
 
-for slice in range(img_data.shape[2]):
+for slice in tqdm(range(img_data.shape[2])):
     # Slice selection
     image = img_data_blurred[:,:,slice]
 

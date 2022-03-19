@@ -3,9 +3,9 @@ from matplotlib.backend_bases import MouseButton
 
 class ScrollPlot:
 
-    def __init__(self, title, ax, X, y):
+    def __init__(self, ax, X, y):
         self.ax = ax
-        ax.set_title(title)
+        ax.set_title('Image Viewer')
 
         self.X = X
         self.y = y
