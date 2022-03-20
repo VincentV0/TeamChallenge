@@ -20,18 +20,18 @@ from skimage.segmentation import flood, flood_fill
 from skimage import measure, filters, color, morphology
 
 
-def show_slice(slice):
-    """
-    Function to display an image slice
-    Input is a numpy 2D array
-    """
-    plt.figure()
-    plt.imshow(slice.T, cmap="gray", origin="lower")
+# def show_slice(slice):
+#     """
+#     Function to display an image slice
+#     Input is a numpy 2D array
+#     """
+#     plt.figure()
+#     plt.imshow(slice.T, cmap="gray", origin="lower")
 
-def overlay_plot(im, mask):
-    plt.figure()
-    plt.imshow(im.T, 'gray', interpolation='none')
-    plt.imshow(mask.T, 'jet', interpolation='none', alpha=0.5)
+# def overlay_plot(im, mask):
+#     plt.figure()
+#     plt.imshow(im.T, 'gray', interpolation='none')
+#     plt.imshow(mask.T, 'jet', interpolation='none', alpha=0.5)
     
 # def make_dirs(path):
 #     """

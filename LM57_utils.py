@@ -8,9 +8,6 @@ import time
 from tqdm import tqdm
 from ScrollPlot import ScrollPlot
 
-def NormalizeData(data):
-    """ Normalizes data to the [0, 255] range; not required right now """
-    return (data - np.min(data)) / (np.max(data) - np.min(data)) * 255
 
 # Set parameters
 MIN_THRESHOLD_BONE = 210
