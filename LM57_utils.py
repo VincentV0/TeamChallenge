@@ -105,8 +105,4 @@ def load_LM57(img_data, postop=False):
 
         # Store 3D data
         dl_image_3d[:,:,slice] = dl_image
-
-        # Rotate points to other frame of reference
-        #p5[:,0], p5[:,1] = img_data.shape[0] - p5[:,1] , p5[:,0]
-        p7[:,0], p7[:,1] = img_data.shape[0] - p7[:,1] , p7[:,0]
     return p5, p7, dl_image_3d
