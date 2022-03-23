@@ -102,6 +102,8 @@ file = '1postop.nii'
 img = nib.load(path+file)
 img_data = img.get_data()
 
+sx, sy, sz = img.header.get_zooms()
+pixel_area = sx * sy
 
 #Slice selection
 image = img_data[:,:,200]
@@ -118,6 +120,7 @@ plt.show()
 
 surface2 = sternum_surface(st_image)
 print("Number of pixels in surface 2 ", surface2)
+print("Area of surface 2 ", surface2*pixel_area, "mm^2")
 
 
 contours = intensity_seg(image, min=-1000, max=-300) # Hounsfields units
@@ -130,6 +133,8 @@ print("Number of pixels for surface 1 and 2 combined ", surface12)
 
 surface1 = surface12 - surface2
 print("Number of pixels in surface 1 ", surface1)
+print("Area of surface 1 ", surface1*pixel_area, "mm^2")
+
 
 
 convex_hull_plot_2d(hull)
