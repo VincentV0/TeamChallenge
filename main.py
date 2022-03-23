@@ -11,6 +11,7 @@ import os
 import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
+import math
 
 # Import specific code
 from readData      import *
@@ -18,6 +19,7 @@ from LM1368_utils  import load_LM1368
 from LM2_utils     import load_LM2
 from LM57_utils    import load_LM57
 from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
+from interpol_outl import interpolate, find_outliers
 from ScrollPlot    import ScrollPlot
 
 # Set the path where all data can be found.
@@ -69,15 +71,17 @@ print('Part 1 finished.')
 ### PART 2 - Landmark 2
 print('\nStarting part 2: Loading landmark 2')
 landmarks[2] = load_LM2(img, lung_segmentation)
+landmarks[2] = rotate_landmarks(landmarks[2], image_origin,math.pi/2)
+
 print('Part 2 finished.')
 
 ### PART 3 - Landmarks 5 and 7 (4 yet to implement here)
 print('\nStarting part 3: Loading landmarks 5 and 7')
-landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
+#landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
 
 # Rotate points 5 and 7 to new frame of reference.
-landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
-landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
+#landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
+#landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
 print('Part 3 finished.')
 
 # Make ScrollPlot
@@ -94,6 +98,11 @@ if point_coords.size > 0:
     print("{:10} {:10} {:10}".format('x','y','z'))
     for x,y,z in point_coords:
         print("{:10} {:10} {:10}".format(x,y,z))
+
+for lm in landmarks:
+    after_interpolation=interpolate(landmarks[lm][:,0], landmarks[lm][:,1])
+    landmarks[lm][:,0], landmarks[lm][:,1], inds=find_outliers(after_interpolation[0], after_interpolation[1])
+
 
 # TODO here:
 # - Implement translation between preop and postop to translate points
