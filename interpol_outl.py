@@ -45,7 +45,7 @@ def interpolate(x_list, y_list):
             complete_list_y[i]=y_list[i]
     return complete_list_x, complete_list_y
 
-def find_outliers(x_list, y_list):
+def find_outliers(x_list, y_list, reference):
     index_outliers=[]
     final_x = np.array([])
     final_y = np.array([])
@@ -53,9 +53,8 @@ def find_outliers(x_list, y_list):
         dist=np.zeros(len(x_list))
         for i in range(len(x_list)):
             if i>1:
-                point_1=(x_list[i-1], y_list[i-1])
-                point_2=(x_list[i], y_list[i])
-                dist[i]=distance.euclidean(point_1,point_2)
+                point=(x_list[i], y_list[i])
+                dist[i]=distance.euclidean(point,reference)
         mean_distance=np.mean(dist)
         sd=np.std(dist)
         for x in range(len(x_list)):
