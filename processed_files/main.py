@@ -12,6 +12,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 import math
+from copy import deepcopy
 
 # Import specific code
 from readData      import *
@@ -85,16 +86,9 @@ print('\nStarting part 3: Loading landmarks 5 and 7')
 #landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
 print('Part 3 finished.')
 
-
-for lm in landmarks:
-    #after_interpolation=interpolate(landmarks[lm][:,0], landmarks[lm][:,1])
-    reference=(true_markers[lm-1][0], true_markers[lm-1][1])
-    landmarks[lm][:,0], landmarks[lm][:,1], inds=find_outliers(landmarks[lm][:,0], landmarks[lm][:,1], reference)
-    landmarks[lm] = interpol_alt(landmarks[lm])
-
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
-sp1 = ScrollPlot(ax1, img, None, landmarks, true_markers)
+sp1 = ScrollPlot(ax1, img, lung_segmentation, landmarks, true_markers)
 fig1.canvas.mpl_connect('scroll_event', sp1.on_scroll)
 fig1.canvas.mpl_connect('button_press_event', sp1.on_click)
 plt.show()
@@ -107,6 +101,10 @@ if point_coords.size > 0:
     for x,y,z in point_coords:
         print("{:10} {:10} {:10}".format(x,y,z))
 
+#for lm in landmarks:
+#    after_interpolation=interpolate(landmarks[lm][:,0], landmarks[lm][:,1])
+#    landmarks[lm][:,0], landmarks[lm][:,1], inds=find_outliers(after_interpolation[0], after_interpolation[1])
+landmarks2 = interpol_alt(deepcopy(landmarks))
 
 # TODO here:
 # - Implement translation between preop and postop to translate points
@@ -114,3 +112,21 @@ if point_coords.size > 0:
 # - Validation (both using the given landmarks and our eyes)
 # --- how to discard points when they are not good enough
 # ...
+
+fig2, ax2 = plt.subplots()
+for lm in landmarks:
+    x = landmarks[lm][:,0]
+    y = landmarks[lm][:,1]
+    ax2.plot(x, label=f'x_{lm}')
+    ax2.plot(y, label=f'y_{lm}')
+    ax2.legend()
+plt.show()
+
+fig3, ax3 = plt.subplots()
+for lm in landmarks2:
+    x = landmarks2[lm][:,0]
+    y = landmarks2[lm][:,1]
+    ax3.plot(x, label=f'x_{lm}')
+    ax3.plot(y, label=f'y_{lm}')
+    ax3.legend()
+plt.show()
