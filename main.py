@@ -101,7 +101,8 @@ if point_coords.size > 0:
 
 for lm in landmarks:
     after_interpolation=interpolate(landmarks[lm][:,0], landmarks[lm][:,1])
-    landmarks[lm][:,0], landmarks[lm][:,1], inds=find_outliers(after_interpolation[0], after_interpolation[1])
+    reference=(true_markers[lm-1][0], true_markers[lm-1][1])
+    landmarks[lm][:,0], landmarks[lm][:,1], inds=find_outliers(after_interpolation[0], after_interpolation[1], reference)
 
 
 # TODO here:
