@@ -120,7 +120,9 @@ def isolate_spine(image):
 
 def spine_surface(image):
     """
-    
+    Complete the surface of the spine by getting rid of holes in the structure.
+    By means of applying a large area of dilation followed by erosion,
+    and a fill holes function for any larger gaps.
     """
     dl_image = dilation(image,disk(15))
     er_image = erosion(dl_image,disk(15))
