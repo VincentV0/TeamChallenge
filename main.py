@@ -14,8 +14,7 @@ import matplotlib.pyplot as plt
 
 # Import specific code
 from readData      import *
-from LM1368_utils  import load_LM1368
-from LM2_utils     import load_LM2
+from LM12368_utils import load_LM12368
 from LM57_utils    import load_LM57
 from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
 from ScrollPlot    import ScrollPlot
@@ -60,25 +59,20 @@ landmarks = dict()
 # Rotate the true markers 
 true_markers = rotate_landmarks(true_markers, image_origin)
 
-### PART 1 - Landmarks 1, 3, 6 and 8; lung contours; surface 1
-print('\nStarting part 1: Loading landmarks 1, 3, 6 and 8, lung contours and surface 1...')
-landmarks[1], landmarks[3], landmarks[6], landmarks[8], \
-    surface1, lung_segmentation, empty_slices = load_LM1368(img)
+### PART 1 - Landmarks 1, 2, 3, 6 and 8; lung contours; surface 1
+print('\nStarting part 1: Loading landmarks 1, 2, 3, 6, 8 and lung contours')
+landmarks[1], landmarks[2], landmarks[3], landmarks[6], landmarks[8], \
+    lung_segmentation = load_LM12368(img)
 print('Part 1 finished.')
 
-### PART 2 - Landmark 2
-print('\nStarting part 2: Loading landmark 2')
-landmarks[2] = load_LM2(img, lung_segmentation)
-print('Part 2 finished.')
-
-### PART 3 - Landmarks 5 and 7 (4 yet to implement here)
-print('\nStarting part 3: Loading landmarks 5 and 7')
+### PART 2 - Landmarks 5 and 7 (4 yet to implement here)
+print('\nStarting part 2: Loading landmarks 5 and 7')
 landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
 
 # Rotate points 5 and 7 to new frame of reference.
 landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
 landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
-print('Part 3 finished.')
+print('Part 2 finished.')
 
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
