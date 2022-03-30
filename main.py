@@ -18,6 +18,7 @@ from LM12368_utils import load_LM12368
 from LM57_utils    import load_LM57
 from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
 from ScrollPlot    import ScrollPlot
+from interp_outliers import find_outliers
 
 # Set the path where all data can be found.
 # Data is assumed to have the following structure (with ? being a number):
@@ -74,6 +75,18 @@ landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
 landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
 print('Part 2 finished.')
 
+
+print('\nStarting part 3: Filtering and interpolating outliers')
+for lm in landmarks:
+    x_list = landmarks[lm][:,0]
+    y_list = landmarks[lm][:,1]
+    reference = true_markers[lm-1][2]
+    threshold = 200
+    landmarks[lm][:,0], landmarks[lm][:,1] = find_outliers(x_list, y_list, reference, threshold)
+print('Part 3 finished')
+
+
+
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
 sp1 = ScrollPlot(ax1, img, None, landmarks, true_markers)
@@ -91,7 +104,5 @@ if point_coords.size > 0:
 
 # TODO here:
 # - Implement translation between preop and postop to translate points
-# - Inter/Extrapolate points (because some are quite poor)
 # - Validation (both using the given landmarks and our eyes)
-# --- how to discard points when they are not good enough
 # ...
