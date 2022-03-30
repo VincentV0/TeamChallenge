@@ -60,7 +60,7 @@ landmarks = dict()
 # Rotate the true markers 
 true_markers = rotate_landmarks(true_markers, image_origin)
 
-### PART 1 - Landmarks 1, 2, 3, 6 and 8; lung contours; surface 1
+### PART 1 - Landmarks 1, 2, 3, 6 and 8; lung contours
 print('\nStarting part 1: Loading landmarks 1, 2, 3, 6, 8 and lung contours')
 landmarks[1], landmarks[2], landmarks[3], landmarks[6], landmarks[8], \
     lung_segmentation = load_LM12368(img)
@@ -68,11 +68,11 @@ print('Part 1 finished.')
 
 ### PART 2 - Landmarks 5 and 7 (4 yet to implement here)
 print('\nStarting part 2: Loading landmarks 5 and 7')
-landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
+#landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
 
 # Rotate points 5 and 7 to new frame of reference.
-landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
-landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
+#landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
+#landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
 print('Part 2 finished.')
 
 # Filter outliers and perform interpolation on unknown points.
@@ -85,6 +85,7 @@ for lm in landmarks:
     landmarks[lm][:,0], landmarks[lm][:,1] = find_outliers(x_list, y_list, reference, threshold)
 print('Part 3 finished.')
 
+# Pick landmark 4 on a couple of slices
 print('\nPart 4: Selection of landmark 4')
 fig4, ax4 = plt.subplots()
 sp4 = ScrollPlot(ax4, img, None, landmarks, true_markers, ax_title="Select landmark 4 on a reasonable number of slices")

@@ -24,6 +24,7 @@ class ScrollPlot:
         self.markers = markers
         self.true_markers = true_markers
         self.markerplot = dict()
+        self.scroll = 1
 
         rows, cols, self.slices = X.shape
         self.ind = self.slices//2
@@ -40,9 +41,9 @@ class ScrollPlot:
     def on_scroll(self, event):
         #print("%s %s" % (event.button, event.step))
         if event.button == 'up':
-            self.ind = (self.ind + 1) % self.slices
+            self.ind = (self.ind + self.scroll) % self.slices
         else:
-            self.ind = (self.ind - 1) % self.slices
+            self.ind = (self.ind - self.scroll) % self.slices
         self.update()
 
     def on_click(self, event):
@@ -53,7 +54,13 @@ class ScrollPlot:
                 self.op_slice_number = self.ind % self.slices
                 self.update()
         elif event.button is MouseButton.RIGHT:
-            plt.close()
+            if self.scroll == 1:
+                self.scroll = 3
+            elif self.scroll == 3:
+                self.scroll = 1
+            else:
+                self.scroll = 1
+            #plt.close()
         else:
             print("Unknown button press")
 
