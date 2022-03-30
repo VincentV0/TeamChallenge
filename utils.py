@@ -58,5 +58,35 @@ def sagittal_diameter(p2, anterior_foramen_point):
     sagit_dia = abs(p2[0]-anterior_foramen_point[0])
     
     #return sagit_dia
+
+def convert_units_distance(x_val, y_val, z_val, nii_header):
+    """
+    Takes a distance in 'pixels' and converts this to meters [?]. 
+    Note: only distances, not absolute positions (there is no clear origin)!
+    Code based on information in https://brainder.org/2012/09/23/the-nifti-file-format/
+    Returns distances in meters.
+    """
+    # Shape of the voxels
+    qfac, sx, sy, sz, _, _, _, _ = nii_header['dim'] = nii_header['pixdim']
     
+    # Nr of pixels in each direction
+    ndim, nx, ny, nz, _, _, _, _ = nii_header['dim']
+
+    # Find units (https://nifti.nimh.nih.gov/nifti-1/documentation/nifti1fields/nifti1fields_pages/xyzt_units.html)
+    unit_id = nii_header['xyzt_units']
+    temporal_id = unit_id // 8
+    spatial_id = unit_id - temporal_id*8
     
+    if spatial_id == 1: # unit = meters; don't do anything
+        pass
+    if spatial_id == 2: # unit = millimeters; compensate with factor 1e-3
+        sx, sy, sz = sx*1e-3, sy*1e-3, sz*1e-3
+    if spatial_id == 3: # unit = micrometers; compensate with factor 1e-6
+        sx, sy, sz = sx*1e-6, sy*1e-6, sz*1e-6
+
+    # Calculate distance in meters
+    x_m = x_val * sx
+    y_m = y_val * sy
+    z_m = z_val * sz * qfac
+
+    return x_m, y_m, z_m

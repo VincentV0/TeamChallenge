@@ -47,10 +47,10 @@ mask1_path = os.path.join(DATA_PATH, image_ID + "_mask1.nii")
 mask2_path = os.path.join(DATA_PATH, image_ID + "_mask2.nii")
 
 print('\nLoading images and manual annotations (for validation)...')
-img            = read_nii(nifty_path, rotate=True)
-img_no_rotate  = read_nii(nifty_path, rotate=False)
-true_markers   = read_xml(xml_path, rotate=True)
-mask1, mask2   = read_nii_masks(mask1_path, mask2_path, rotate=True)
+img,header      = read_nii(nifty_path, rotate=True)
+img_no_rotate,_ = read_nii(nifty_path, rotate=False)
+true_markers    = read_xml(xml_path, rotate=True)
+mask1, mask2    = read_nii_masks(mask1_path, mask2_path, rotate=True)
 
 # Setting some variables:
 image_origin = (img.shape[0]//2, img.shape[1]//2)
@@ -75,7 +75,7 @@ landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
 landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
 print('Part 2 finished.')
 
-
+# Filter outliers and perform interpolation on unknown points.
 print('\nStarting part 3: Filtering and interpolating outliers')
 for lm in landmarks:
     x_list = landmarks[lm][:,0]
@@ -84,8 +84,6 @@ for lm in landmarks:
     threshold = 200
     landmarks[lm][:,0], landmarks[lm][:,1] = find_outliers(x_list, y_list, reference, threshold)
 print('Part 3 finished')
-
-
 
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
@@ -101,6 +99,8 @@ if point_coords.size > 0:
     print("{:10} {:10} {:10}".format('x','y','z'))
     for x,y,z in point_coords:
         print("{:10} {:10} {:10}".format(x,y,z))
+
+
 
 # TODO here:
 # - Implement translation between preop and postop to translate points
