@@ -15,9 +15,9 @@ COLORS = {
 
 
 class ScrollPlot:
-    def __init__(self, ax, X, y=None, markers=None, true_markers=None):
+    def __init__(self, ax, X, y=None, markers=None, true_markers=None, ax_title="Image Viewer"):
         self.ax = ax
-        ax.set_title('Image Viewer')
+        ax.set_title(ax_title)
         self.X = X
         self.y = y
         self.marked_points = []

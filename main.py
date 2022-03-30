@@ -18,7 +18,7 @@ from LM12368_utils import load_LM12368
 from LM57_utils    import load_LM57
 from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
 from ScrollPlot    import ScrollPlot
-from interp_outliers import find_outliers
+from interp_outliers import find_outliers, interpol_alt
 
 # Set the path where all data can be found.
 # Data is assumed to have the following structure (with ? being a number):
@@ -83,7 +83,25 @@ for lm in landmarks:
     reference = true_markers[lm-1][2]
     threshold = 200
     landmarks[lm][:,0], landmarks[lm][:,1] = find_outliers(x_list, y_list, reference, threshold)
-print('Part 3 finished')
+print('Part 3 finished.')
+
+print('\nPart 4: Selection of landmark 4')
+fig4, ax4 = plt.subplots()
+sp4 = ScrollPlot(ax4, img, None, landmarks, true_markers, ax_title="Select landmark 4 on a reasonable number of slices")
+fig4.canvas.mpl_connect('scroll_event', sp4.on_scroll)
+fig4.canvas.mpl_connect('button_press_event', sp4.on_click)
+plt.show()
+points_selected_LM4 = sp4.get_marked_points()
+
+# Convert point_selected_LM4 to different format
+x4,y4 = np.ones((img.shape[2]))*-1, np.ones((img.shape[2]))*-1
+for point in points_selected_LM4:
+    x4[point[2]] = point[0]
+    y4[point[2]] = point[1]
+
+x4i,y4i = interpol_alt(x4,y4)
+landmarks[4] = np.transpose(np.stack((x4i,y4i)))
+print('Part 4 finished.')
 
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
@@ -100,9 +118,3 @@ if point_coords.size > 0:
     for x,y,z in point_coords:
         print("{:10} {:10} {:10}".format(x,y,z))
 
-
-
-# TODO here:
-# - Implement translation between preop and postop to translate points
-# - Validation (both using the given landmarks and our eyes)
-# ...

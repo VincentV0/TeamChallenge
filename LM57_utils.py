@@ -100,7 +100,7 @@ def load_LM57(img_data, postop=False):
         #dl_image = erosion(dl_image,disk(15))
 
 
-        #p5[slice] = LM5(dl_image)
+        p5[slice] = LM5(dl_image)
         p7[slice] = LM7(dl_image)
 
         # Store 3D data
