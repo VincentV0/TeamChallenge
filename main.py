@@ -18,7 +18,6 @@ from readData      import *
 from LM12368_utils import load_LM12368
 from LM57_utils    import load_LM57
 from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
-from interpol_outl import interpolate, find_outliers
 from ScrollPlot    import ScrollPlot
 from interp_outliers import find_outliers
 
@@ -87,14 +86,6 @@ for lm in landmarks:
     landmarks[lm][:,0], landmarks[lm][:,1] = find_outliers(x_list, y_list, reference, threshold)
 print('Part 3 finished')
 
-
-
-
-for lm in landmarks:
-    #after_interpolation=interpolate(landmarks[lm][:,0], landmarks[lm][:,1])
-    reference=(true_markers[lm-1][0], true_markers[lm-1][1])
-    landmarks[lm][:,0], landmarks[lm][:,1], inds=find_outliers(landmarks[lm][:,0], landmarks[lm][:,1], reference)
-    landmarks[lm] = interpol_alt(landmarks[lm])
 
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
