@@ -15,13 +15,12 @@ import math
 
 # Import specific code
 from readData      import *
-from LM1368_utils  import load_LM1368
-from LM2_utils     import load_LM2
+from LM12368_utils import load_LM12368
 from LM57_utils    import load_LM57
 from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
 from interpol_outl import interpolate, find_outliers
 from ScrollPlot    import ScrollPlot
-from interpol_alternative import interpol_alt
+from interp_outliers import find_outliers
 
 # Set the path where all data can be found.
 # Data is assumed to have the following structure (with ? being a number):
@@ -63,27 +62,32 @@ landmarks = dict()
 # Rotate the true markers 
 true_markers = rotate_landmarks(true_markers, image_origin)
 
-### PART 1 - Landmarks 1, 3, 6 and 8; lung contours; surface 1
-print('\nStarting part 1: Loading landmarks 1, 3, 6 and 8, lung contours and surface 1...')
-landmarks[1], landmarks[3], landmarks[6], landmarks[8], \
-    surface1, lung_segmentation, empty_slices = load_LM1368(img)
+### PART 1 - Landmarks 1, 2, 3, 6 and 8; lung contours; surface 1
+print('\nStarting part 1: Loading landmarks 1, 2, 3, 6, 8 and lung contours')
+landmarks[1], landmarks[2], landmarks[3], landmarks[6], landmarks[8], \
+    lung_segmentation = load_LM12368(img)
 print('Part 1 finished.')
 
-### PART 2 - Landmark 2
-print('\nStarting part 2: Loading landmark 2')
-landmarks[2] = load_LM2(img, lung_segmentation)
-landmarks[2] = rotate_landmarks(landmarks[2], image_origin,math.pi/2)
-
-print('Part 2 finished.')
-
-### PART 3 - Landmarks 5 and 7 (4 yet to implement here)
-print('\nStarting part 3: Loading landmarks 5 and 7')
-#landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
+### PART 2 - Landmarks 5 and 7 (4 yet to implement here)
+print('\nStarting part 2: Loading landmarks 5 and 7')
+landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
 
 # Rotate points 5 and 7 to new frame of reference.
-#landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
-#landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
-print('Part 3 finished.')
+landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
+landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
+print('Part 2 finished.')
+
+
+print('\nStarting part 3: Filtering and interpolating outliers')
+for lm in landmarks:
+    x_list = landmarks[lm][:,0]
+    y_list = landmarks[lm][:,1]
+    reference = true_markers[lm-1][2]
+    threshold = 200
+    landmarks[lm][:,0], landmarks[lm][:,1] = find_outliers(x_list, y_list, reference, threshold)
+print('Part 3 finished')
+
+
 
 
 for lm in landmarks:
@@ -110,7 +114,5 @@ if point_coords.size > 0:
 
 # TODO here:
 # - Implement translation between preop and postop to translate points
-# - Inter/Extrapolate points (because some are quite poor)
 # - Validation (both using the given landmarks and our eyes)
-# --- how to discard points when they are not good enough
 # ...

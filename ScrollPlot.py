@@ -47,10 +47,11 @@ class ScrollPlot:
 
     def on_click(self, event):
         if event.button is MouseButton.LEFT:
-            x_marked, y_marked = round(event.xdata), round(event.ydata)
-            self.marked_points.append([x_marked, y_marked, self.ind])
-            self.op_slice_number = self.ind % self.slices
-            self.update()
+            if event.xdata is not None and event.ydata is not None:
+                x_marked, y_marked = round(event.xdata), round(event.ydata)
+                self.marked_points.append([x_marked, y_marked, self.ind])
+                self.op_slice_number = self.ind % self.slices
+                self.update()
         elif event.button is MouseButton.RIGHT:
             plt.close()
         else:
