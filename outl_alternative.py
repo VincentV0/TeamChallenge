@@ -53,8 +53,8 @@ def find_outliers(x_list, y_list, reference, reference_slide, threshold):
             point=(x_list[i], y_list[i])
             dist=distance.euclidean(previous_point,point)
             if dist>threshold:
-                x_list[i]=0
-                y_list[i]=0           
+                x_list[i]=-1
+                y_list[i]=-1          
     for i in range(reference_slice-2,-1,-1):
         m=1
         while x_list[i+m]==0:
@@ -64,8 +64,8 @@ def find_outliers(x_list, y_list, reference, reference_slide, threshold):
             point=(x_list[i], y_list[i])
             dist=distance.euclidean(previous_point,point)
             if dist>threshold:
-                x_list[i]=0
-                y_list[i]=0
+                x_list[i]=-1
+                y_list[i]=-1
     interpolation=interpolate(x_list, y_list)
     final_x=interpolation[0]
     final_y=interpolation[1]
