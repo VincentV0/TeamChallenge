@@ -134,7 +134,7 @@ def spine_surface(image):
     plt.show()
         
     pixels = np.count_nonzero(er_image)
-    return pixels
+    return pixels, filled_image
 
 #Load the image
 path = 'C://Users//nibob//OneDrive//Documenten//Tue//Master//TeamCH_P2//Scoliose//Scoliose//'
@@ -157,7 +157,7 @@ st_image, cof = isolate_spine(image)
 plt.imshow(st_image)
 plt.show()
 
-surface2 = spine_surface(st_image)
+surface2, spine_image = spine_surface(st_image)
 print("Number of pixels in surface 2 ", surface2)
 print("Area of surface 2 ", surface2*pixel_area, "mm^2")
 
@@ -174,6 +174,17 @@ surface1 = surface12 - surface2
 print("Number of pixels in surface 1 ", surface1)
 print("Area of surface 1 ", surface1*pixel_area, "mm^2")
 
-convex_hull_plot_2d(hull)
-plt.imshow(image)
+
+x_coords = np.array(contours_total[hull.vertices,0],int)
+y_coords = np.array(contours_total[hull.vertices,1],int)
+
+#Rotate the coordinates for the total area with 90 degrees 
+#to correspond to the orientation of the original image
+xy = np.column_stack((x_coords,y_coords))
+xy_rotated = np.rot90(xy)
+
+
+plt.fill(xy_rotated[0,:],xy_rotated[1,:], 'r', alpha = 0.2)
+plt.imshow(spine_image)
+
 plt.show()
