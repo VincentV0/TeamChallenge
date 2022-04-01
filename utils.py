@@ -38,22 +38,23 @@ def haller_index(lms):
     therefor points p2, p4 (for A-P length) and p1 and p3 (for the ML length) is needed. 
     
     !Make sure the scans are oriented with the dorsal side at the bottom of the image!
-
-    ** does not work yet, because we do not have p4 yet! **
     """
+    HI = np.ones(lms[1].shape[0]) * -1
+    for slice in range(lms[1].shape[0]):
+        if -1 in lms[1][slice] or -1 in lms[2][slice] \
+            or -1 in lms[3][slice] or -1 in lms[4][slice]: continue
+        else:
+            AP_length = abs(lms[1][slice,1]-lms[3][slice,1]) # anterior, posterior length
+            ML_length = abs(lms[2][slice,0]-lms[4][slice,0]) # medial, lateral length
     
-    AP_length = abs(lms[1][:,1]-lms[3][:,1]) # anterior, posterior length
-    ML_length = abs(lms[2][:,0]-lms[4][:,0]) # medial, lateral length
-    
-    HI_index = ML_length/AP_length # Haller index
-    return HI_index
+            HI_index = ML_length/AP_length # Haller index
+            HI[slice] = HI_index
+    return HI
 
 def sagittal_diameter(p2, anterior_foramen_point):
     
     """
     calculating the sagittal diameter by taking the length between point 1 and the anterior point of the spinal foramen.
-    
-    ** does not work yet, because we do not have the anterior foramen point yet! **
     """
     sagit_dia = abs(p2[0]-anterior_foramen_point[0])
     

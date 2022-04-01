@@ -19,6 +19,7 @@ from LM57_utils    import load_LM57
 from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
 from ScrollPlot    import ScrollPlot
 from interp_outliers import find_outliers, interpol_alt
+from surface_areas import get_surfaces
 
 # Set the path where all data can be found.
 # Data is assumed to have the following structure (with ? being a number):
@@ -60,22 +61,27 @@ landmarks = dict()
 # Rotate the true markers 
 true_markers = rotate_landmarks(true_markers, image_origin)
 
+
+
 ### PART 1 - Landmarks 1, 2, 3, 6 and 8; lung contours
 print('\nStarting part 1: Loading landmarks 1, 2, 3, 6, 8 and lung contours')
 landmarks[1], landmarks[2], landmarks[3], landmarks[6], landmarks[8], \
     lung_segmentation = load_LM12368(img)
 print('Part 1 finished.')
 
-### PART 2 - Landmarks 5 and 7 (4 yet to implement here)
-print('\nStarting part 2: Loading landmarks 5 and 7')
-#landmarks[5], landmarks[7], dl_image = load_LM57(img_no_rotate, postop)
 
-# Rotate points 5 and 7 to new frame of reference.
-#landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
-#landmarks[7] = rotate_landmarks(landmarks[7], image_origin)
+
+### PART 2 - Landmark 5
+print('\nStarting part 2: Loading landmark 5')
+landmarks[5], _, dl_image = load_LM57(img_no_rotate, postop)
+
+# Rotate point 5 to new frame of reference.
+landmarks[5] = rotate_landmarks(landmarks[5], image_origin)
 print('Part 2 finished.')
 
-# Filter outliers and perform interpolation on unknown points.
+
+
+### PART 3 - Filter outliers and perform interpolation on unknown points.
 print('\nStarting part 3: Filtering and interpolating outliers')
 for lm in landmarks:
     x_list = landmarks[lm][:,0]
@@ -85,8 +91,11 @@ for lm in landmarks:
     landmarks[lm][:,0], landmarks[lm][:,1] = find_outliers(x_list, y_list, reference, threshold)
 print('Part 3 finished.')
 
+
+
+### PART 4 - Landmarks 4 and 7 (manually)
 # Pick landmark 4 on a couple of slices
-print('\nPart 4: Selection of landmark 4')
+print('\nPart 4: Selection of landmarks 4 and 7')
 fig4, ax4 = plt.subplots()
 sp4 = ScrollPlot(ax4, img, None, landmarks, true_markers, ax_title="Select landmark 4 on a reasonable number of slices")
 fig4.canvas.mpl_connect('scroll_event', sp4.on_scroll)
@@ -94,15 +103,43 @@ fig4.canvas.mpl_connect('button_press_event', sp4.on_click)
 plt.show()
 points_selected_LM4 = sp4.get_marked_points()
 
-# Convert point_selected_LM4 to different format
+# Pick landmark 7 on a couple of slices and interpolate
+fig7, ax7 = plt.subplots()
+sp7 = ScrollPlot(ax7, img, None, landmarks, true_markers, ax_title="Select landmark 7 on a reasonable number of slices")
+fig7.canvas.mpl_connect('scroll_event', sp7.on_scroll)
+fig7.canvas.mpl_connect('button_press_event', sp7.on_click)
+plt.show()
+points_selected_LM7 = sp7.get_marked_points()
+
+# Convert point_selected_LM4/-7 to different format
 x4,y4 = np.ones((img.shape[2]))*-1, np.ones((img.shape[2]))*-1
+x7,y7 = np.ones((img.shape[2]))*-1, np.ones((img.shape[2]))*-1
+
 for point in points_selected_LM4:
     x4[point[2]] = point[0]
     y4[point[2]] = point[1]
+for point in points_selected_LM7:
+    x7[point[2]] = point[0]
+    y7[point[2]] = point[1]
 
 x4i,y4i = interpol_alt(x4,y4)
+x7i,y7i = interpol_alt(x7,y7)
+
 landmarks[4] = np.transpose(np.stack((x4i,y4i)))
+landmarks[7] = np.transpose(np.stack((x7i,y7i)))
 print('Part 4 finished.')
+
+
+### PART 5 - Areas (unit = mm^2)
+print('\nStarting part 5: Loading surface areas')
+surf1, surf2 = get_surfaces(img, header)
+print('Part 5 finished.')
+
+
+### PART 6 - Thoracic parameters
+print('\nStarting part 6: Calculating thoracic parameters')
+HI = haller_index(landmarks)
+print('Part 6 finished.')
 
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
