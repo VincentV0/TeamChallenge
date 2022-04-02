@@ -1,12 +1,6 @@
-import nibabel as nib
-import matplotlib.pyplot as plt
-from skimage.morphology import disk, erosion, dilation, area_closing, square, remove_small_objects, h_maxima
-from skimage.measure import regionprops
-import scipy.ndimage as ndimage
+from skimage.morphology import erosion, dilation, area_closing, square, remove_small_objects
 import numpy as np
-import time
 from tqdm import tqdm
-from ScrollPlot import ScrollPlot
 
 
 # Set parameters
@@ -40,7 +34,6 @@ def LM7(dl_image):
 
     spine_x=spine[1] #select x coordinates of spine
     spine_y=spine[0] #select y coordinates of spine
-    #indices=[] #
     canal_x=[] #empty array to store x coordinates of spine
     canal_y=[] # empty array to store y coordinates of spine
 
@@ -68,9 +61,6 @@ def load_LM57(img_data, postop=False):
     if postop:
         img_data[img_data > MAX_THRESHOLD_ANTI_METAL] = MAX_THRESHOLD_ANTI_METAL
 
-    # Gaussian blurring
-    #img_data_blurred = ndimage.gaussian_filter(img_data, sigma=(3, 3, 3), order=0)
-
     # Create empty arrays to store data in
     dl_image_3d = np.zeros(img_data.shape)
     p5 = np.ones((img_data.shape[2],2)) * -1
@@ -91,13 +81,6 @@ def load_LM57(img_data, postop=False):
         dl_image = remove_small_objects(dl_image, min_size=1500)
         # Undo the dilation
         dl_image = erosion(dl_image,square(3))
-
-        #labeled_foreground = dl_image.astype(int)
-        #properties = regionprops(labeled_foreground)
-        #center_of_mass = properties[0].centroid
-
-        #dl_image = dilation(dl_image,disk(15))
-        #dl_image = erosion(dl_image,disk(15))
 
 
         p5[slice] = LM5(dl_image)

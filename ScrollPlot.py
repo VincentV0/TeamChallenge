@@ -1,4 +1,3 @@
-import matplotlib.pyplot as plt
 from matplotlib.backend_bases import MouseButton
 import numpy as np
 

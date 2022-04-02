@@ -1,7 +1,4 @@
 import numpy as np
-import SimpleITK as sitk
-import os
-import matplotlib.pyplot as plt
 from xml.dom import minidom
 import nibabel as nib
 

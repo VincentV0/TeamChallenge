@@ -1,15 +1,11 @@
 from scipy.spatial import ConvexHull
 import numpy as np
-import nibabel as nib
-import matplotlib.pyplot as plt
-from skimage.morphology import disk, erosion, dilation, area_closing, square, remove_small_objects, h_maxima
+from skimage.morphology import disk, erosion, dilation, area_closing, square, remove_small_objects
 from skimage.measure import regionprops
 from skimage import measure
 from scipy import ndimage
 from tqdm import tqdm
 
-from skimage.filters import gaussian
-from scipy.spatial import ConvexHull, convex_hull_plot_2d
 
 ##Functions from LM1368_utils.py
 def set_is_closed(contour):
@@ -105,11 +101,8 @@ def isolate_spine(image):
     nonzero = np.argwhere(dl_image == True)
     distances = np.sqrt((nonzero[:,0] - center_of_mass[0]) ** 2 + (nonzero[:,1] - center_of_mass[1]) ** 2)
     
-    #nearest_index = np.argmin(distances)
     
-    #avg_distance = np.mean(distances)
     avg_distance = 100 #Chosen based on experimental results
-    #print("average distance: ", avg_distance)
     
     for point in properties[0].coords:
         dist = np.sqrt((point[0] - center_of_mass[0]) ** 2 + (point[1] - center_of_mass[1]) ** 2)
@@ -154,21 +147,16 @@ def get_surfaces(img, header):
             
             surface2_pixels, surface2_mask = spine_surface(st_image)
             surface2 = surface2_pixels*pixel_area
-            #print("Number of pixels in surface 2 ", surface2_pixels)
-            #print("Area of surface 2 ", surface2_pixels, "mm^2")
-
+           
             contours = intensity_seg(image, min=-1000, max=-300) # Hounsfields units
             contours = find_lungs_adapted(contours)
             contours_total = np.concatenate((contours[0], contours[1]))
             hull = ConvexHull(contours_total)
 
             surface12_pixels = round(hull.volume)
-            #print("Number of pixels for surface 1 and 2 combined ", surface12)
 
             surface1_pixels = surface12_pixels - surface2_pixels
             surface1 = surface1_pixels*pixel_area
-            #print("Number of pixels in surface 1 ", surface1)
-            #print("Area of surface 1 ", surface1*pixel_area, "mm^2")
 
             surfaces1[slice] = surface1
             surfaces2[slice] = surface2

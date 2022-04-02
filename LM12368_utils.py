@@ -4,19 +4,16 @@ Code is provided by Adaloglou Nikolas (2021)
 https://github.com/black0017/ct-intensity-segmentation
 
 """
-import os
 import cv2
 import math
 
 import numpy as np
-import nibabel as nib
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm
 from PIL import Image, ImageDraw
 from scipy.spatial import ConvexHull
-from skimage.segmentation import flood, flood_fill
-from skimage import measure, filters, color, morphology
+from skimage import measure
 
 
 HU_BONE = 200 # bone is around 300-400 HU (taking artefacts such as streaking- and cupping artefacts in account so decreasing to 200)
@@ -145,7 +142,6 @@ def centroid_sternum(bone_threshold_filtered_image, l1, l2):
     kernel = np.ones((5,5),np.uint8)
     closing = cv2.morphologyEx(fov_im90, cv2.MORPH_CLOSE, kernel, iterations=3)
     closing = closing.astype('int8')# om te voorkomen dat je een of andere vage error over orde van grootte van de getallen krijgt
-    #imgplot = plt.imshow(closing, cmap='gray')
 
     # Extract sternum with properties
     connectivity = 4  

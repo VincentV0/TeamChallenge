@@ -9,7 +9,6 @@ Last updated: 21 Mar 2022
 # Import general libraries
 import os
 import numpy as np
-import nibabel as nib
 import matplotlib.pyplot as plt
 
 # Import specific code
