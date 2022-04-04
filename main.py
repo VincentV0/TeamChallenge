@@ -138,7 +138,7 @@ print('Part 5 finished.')
 
 ### PART 6 - Thoracic parameters
 print('\nStarting part 6: Calculating thoracic parameters')
-HI = haller_index(landmarks)
+HI = haller_index(landmarks, header)
 print('Part 6 finished.')
 
 ### PART 7 - Exporting landmarks

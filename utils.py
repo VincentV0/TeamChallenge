@@ -32,7 +32,7 @@ def rotate_landmarks(landmarks, origin, angle=-math.pi/2):
             landmarks[i][1] = np.array(rotate((x,y), origin, angle)[1])
     return landmarks
 
-def haller_index(lms):
+def haller_index(lms, nii_header):
     """
     
     Haller index is defined by the width divided by length of the thorax. 
@@ -46,9 +46,12 @@ def haller_index(lms):
             or -1 in lms[3][slice] or -1 in lms[4][slice]: continue
         else:
             AP_length = abs(lms[1][slice,1]-lms[3][slice,1]) # anterior, posterior length
+            AP_len_meter = convert_units_distance(0, AP_length, 0, nii_header)
+
             ML_length = abs(lms[2][slice,0]-lms[4][slice,0]) # medial, lateral length
-    
-            HI_index = ML_length/AP_length # Haller index
+            ML_len_meter = convert_units_distance(ML_length, 0, 0, nii_header)
+
+            HI_index = ML_len_meter/AP_len_meter # Haller index
             HI[slice] = HI_index
     return HI
 
@@ -103,4 +106,3 @@ def export_to_excel(landmarks, filename):
         df[f"{lm}_y"] = landmark[:,1]
         df[f"{lm}_z"] = np.arange(landmark.shape[0])
     df.to_excel(filename)
-    
