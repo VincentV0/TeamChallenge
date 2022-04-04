@@ -33,8 +33,7 @@ def rotate_landmarks(landmarks, origin, angle=-math.pi/2):
     return landmarks
 
 def haller_index(lms, nii_header):
-    """
-    
+    """    
     Haller index is defined by the width divided by length of the thorax. 
     therefor points p2, p4 (for A-P length) and p1 and p3 (for the ML length) is needed. 
     
@@ -42,27 +41,24 @@ def haller_index(lms, nii_header):
     """
     HI = np.ones(lms[1].shape[0]) * -1
     for slice in range(lms[1].shape[0]):
+
+        # All points have to be known to calculate the Haller index
         if -1 in lms[1][slice] or -1 in lms[2][slice] \
             or -1 in lms[3][slice] or -1 in lms[4][slice]: continue
         else:
+            # Calculate Anterior-Posterior length in voxels and convert to length in meters
             AP_length = abs(lms[1][slice,1]-lms[3][slice,1]) # anterior, posterior length
             _, AP_len_meter, _ = convert_units_distance(0, AP_length, 0, nii_header)
 
+            # Calculate Median-Lateral length in voxels and convert to length in meters
             ML_length = abs(lms[2][slice,0]-lms[4][slice,0]) # medial, lateral length
             ML_len_meter, _, _ = convert_units_distance(ML_length, 0, 0, nii_header)
 
-            HI_index = ML_len_meter/AP_len_meter # Haller index
+            # Calculate Haller index
+            HI_index = ML_len_meter/AP_len_meter
             HI[slice] = HI_index
     return HI
 
-def sagittal_diameter(p2, anterior_foramen_point):
-    
-    """
-    calculating the sagittal diameter by taking the length between point 1 and the anterior point of the spinal foramen.
-    """
-    sagit_dia = abs(p2[0]-anterior_foramen_point[0])
-    
-    #return sagit_dia
 
 def convert_units_distance(x_val, y_val, z_val, nii_header):
     """
@@ -99,10 +95,28 @@ def convert_units_distance(x_val, y_val, z_val, nii_header):
 
 
 def export_to_excel(landmarks, filename):
+    """
+    Export the dictionary of landmarks to an xlsx-file.
+    Structure of xlsx-file:
+    1_x | 1_y | 1_z | 2_x | 2_y | ...
+    """
     df = pd.DataFrame()
     for lm in landmarks:
         landmark = landmarks[lm]
         df[f"{lm}_x"] = landmark[:,0]
         df[f"{lm}_y"] = landmark[:,1]
         df[f"{lm}_z"] = np.arange(landmark.shape[0])
+    df.to_excel(filename)
+
+
+def haller_index_export(HI1, HI2=None, filename=''):
+    """
+    Export the array with Haller indices to an xlsx-file.
+    Structure of xlsx-file:
+    slice | HI1 | (HI2)
+    """
+    df = pd.DataFrame()
+    df[f"HI1"] = HI1
+    if HI2 is not None:
+        df[f"HI2"] = HI2
     df.to_excel(filename)
