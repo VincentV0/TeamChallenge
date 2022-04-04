@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import pandas as pd
 
 def NormalizeData(data):
     """ Normalizes data to the [0, 255] range; not required right now """
@@ -91,3 +92,15 @@ def convert_units_distance(x_val, y_val, z_val, nii_header):
     z_m = z_val * sz * qfac
 
     return x_m, y_m, z_m
+
+
+
+def export_to_excel(landmarks, filename):
+    df = pd.DataFrame()
+    for lm in landmarks:
+        landmark = landmarks[lm]
+        df[f"{lm}_x"] = landmark[:,0]
+        df[f"{lm}_y"] = landmark[:,1]
+        df[f"{lm}_z"] = np.arange(landmark.shape[0])
+    df.to_excel(filename)
+    

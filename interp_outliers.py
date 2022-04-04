@@ -16,8 +16,8 @@ def interpol_alt(x,y):
         y1 = np.interp(t_interpol, t_true, y_true)
                 
 
-        x[start_point:end_point] = x1 #x_smooth
-        y[start_point:end_point] = y1 #y_smooth
+        x[start_point:end_point] = np.round(x1) #x_smooth
+        y[start_point:end_point] = np.round(y1) #y_smooth
 
         x[x == -1] = -1
         x[y == -1] = -1

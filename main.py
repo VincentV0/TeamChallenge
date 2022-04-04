@@ -8,6 +8,7 @@ Last updated: 21 Mar 2022
 
 # Import general libraries
 import os
+from re import L
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -15,10 +16,10 @@ import matplotlib.pyplot as plt
 from readData      import *
 from LM12368_utils import load_LM12368
 from LM57_utils    import load_LM57
-from utils         import rotate, rotate_landmarks, sagittal_diameter, haller_index
+from utils         import export_to_excel, rotate, rotate_landmarks, sagittal_diameter, haller_index
 from ScrollPlot    import ScrollPlot
 from interp_outliers import find_outliers, interpol_alt
-from surface_areas import get_surfaces
+from surface_areas_v2 import get_surfaces
 
 # Set the path where all data can be found.
 # Data is assumed to have the following structure (with ? being a number):
@@ -131,7 +132,7 @@ print('Part 4 finished.')
 
 ### PART 5 - Areas (unit = mm^2)
 print('\nStarting part 5: Loading surface areas')
-surf1, surf2 = get_surfaces(img, header)
+#surfaces1, surfaces2, surface1_mm2, surface2_mm2 = get_surfaces(img, header)
 print('Part 5 finished.')
 
 
@@ -139,6 +140,22 @@ print('Part 5 finished.')
 print('\nStarting part 6: Calculating thoracic parameters')
 HI = haller_index(landmarks)
 print('Part 6 finished.')
+
+### PART 7 - Exporting landmarks
+export_q = 'None'
+while export_q.lower() != '' and export_q.lower() != 'y' and export_q.lower() != 'n':
+    print("\nDo you want to export the landmarks to an .xlsx file?")
+    export_q = input('y/[n] > ')
+    if export_q.lower() == 'y':
+        print("Enter filename for xlsx-file: ")
+        xlsx_path = input("> ")
+        if xlsx_path[-5:] != '.xlsx': xlsx_path += '.xlsx' # add extension if necessary
+        export_to_excel(landmarks, xlsx_path)
+    elif export_q != 'n' and export_q != '':
+        print("Unknown option, try again.")
+    else:
+        pass
+
 
 # Make ScrollPlot
 fig1, ax1 = plt.subplots()
