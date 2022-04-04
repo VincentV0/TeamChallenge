@@ -46,10 +46,10 @@ def haller_index(lms, nii_header):
             or -1 in lms[3][slice] or -1 in lms[4][slice]: continue
         else:
             AP_length = abs(lms[1][slice,1]-lms[3][slice,1]) # anterior, posterior length
-            AP_len_meter = convert_units_distance(0, AP_length, 0, nii_header)
+            _, AP_len_meter, _ = convert_units_distance(0, AP_length, 0, nii_header)
 
             ML_length = abs(lms[2][slice,0]-lms[4][slice,0]) # medial, lateral length
-            ML_len_meter = convert_units_distance(ML_length, 0, 0, nii_header)
+            ML_len_meter, _, _ = convert_units_distance(ML_length, 0, 0, nii_header)
 
             HI_index = ML_len_meter/AP_len_meter # Haller index
             HI[slice] = HI_index
