@@ -18,11 +18,11 @@ def LM5(image):
     while y < image.shape[1]-1:
         for x in range(image.shape[0] - 1 ):
             if image[x,y] == True:
-                point_5 = [x,y]
+                point_5 = [y,x]
                 break
             x=x+1
         y=y+1
-    return x,y
+    return point_5
 
 
 def LM7(dl_image):
